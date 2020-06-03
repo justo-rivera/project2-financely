@@ -1,0 +1,1 @@
+module.exports = [ 'SPH', 'CHGX', 'ALNA', 'DUSA', 'CELG^', 'DCP', 'CSPR', 'AGM', 'AHT-G', 'AMRH', 'CALX', 'CFFN', 'AVUV', 'BWA', 'AMJ', 'BUL', 'BBDO', 'AINV', 'BANC', 'ALBO', 'DFPHU', 'DLTR', 'BXMT', 'ADSK', 'ACRX', 'BRKS', 'CEQP', 'BKLC', 'DMLP', 'ATOM', 'ADAP', 'CELH', 'CGEN', 'BLU', 'BLE', 'CRC', 'FEMB', 'CRWS']

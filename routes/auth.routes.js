@@ -8,42 +8,42 @@ router.get('/signup', (req, res) => {
 });
 
 router.post('/signup', (req, res) => {
-    const {username, email, password } = req.body;
-    console.log(username, email, password);
+    const {name, email, password, creditCard, experience } = req.body;
+    console.log(name, email, password);
 
     
-    if (!username || !email || !password) {
+    if (!name || !email || !password ||!creditCard ||!experience) {
         res.status(500)
           .render('auth/signup.hbs', {
-            errorMessage: 'Please enter username, email and password'
+            errorMessage: 'Please enter username, email and password, credit card number and experience'
           });
         return;  
     }
 
-    const myRegex = new RegExp(/^[a-z0-9](?!.*?[^\na-z0-9]{2})[^\s@]+@[^\s@]+\.[^\s@]+[a-z0-9]$/);
-    if (!myRegex.test(email)) {
-      res.status(500)
-          .render('auth/signup.hbs', {
-            errorMessage: 'Email format not correct'
-          });
-        return;  
-    }
+    // const myRegex = new RegExp(/^[a-z0-9](?!.*?[^\na-z0-9]{2})[^\s@]+@[^\s@]+\.[^\s@]+[a-z0-9]$/);
+    // if (!myRegex.test(email)) {
+    //   res.status(500)
+    //       .render('auth/signup.hbs', {
+    //         errorMessage: 'Email format not correct'
+    //       });
+    //     return;  
+    // }
 
-    const myPassRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/);
-    if (!myPassRegex.test(password)) {
-      res.status(500)
-          .render('auth/signup.hbs', {
-            errorMessage: 'Password needs to have 8 characters, a number and an Uppercase alphabet'
-          });
-        return;  
-    }
+    // const myPassRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/);
+    // if (!myPassRegex.test(password)) {
+    //   res.status(500)
+    //       .render('auth/signup.hbs', {
+    //         errorMessage: 'Password needs to have 8 characters, a number and an Uppercase alphabet'
+    //       });
+    //     return;  
+    // }
 
     bcrypt.genSalt(12)
       .then((salt) => {
         console.log('Salt: ', salt);
         bcrypt.hash(password, salt)
           .then((passwordHash) => {
-            UserModel.create({email, username, passwordHash})
+            UserModel.create({name, email, creditCard, experience, passwordHash})
               .then(() => {
                 res.redirect('/profile');
               })
@@ -58,8 +58,9 @@ router.post('/signup', (req, res) => {
                 else {
                   res.status(500)
                   .render('auth/signup.hbs', {
-                    errorMessage: 'Something went wrong! Go to sleep!'
+                    errorMessage: 'Something went wrong! Go to sleep!' + err
                   });
+                  console.log(err);
                   return; 
                 }
               })
@@ -82,14 +83,14 @@ router.post('/signin', (req, res) => {
       });
     return;  
   }
-  const myRegex = new RegExp(/^[a-z0-9](?!.*?[^\na-z0-9]{2})[^\s@]+@[^\s@]+\.[^\s@]+[a-z0-9]$/);
-  if (!myRegex.test(email)) {
-    res.status(500)
-        .render('auth/signup.hbs', {
-          errorMessage: 'Email format not correct'
-        });
-      return;  
-  }
+  // const myRegex = new RegExp(/^[a-z0-9](?!.*?[^\na-z0-9]{2})[^\s@]+@[^\s@]+\.[^\s@]+[a-z0-9]$/);
+  // if (!myRegex.test(email)) {
+  //   res.status(500)
+  //       .render('auth/signup.hbs', {
+  //         errorMessage: 'Email format not correct'
+  //       });
+  //     return;  
+  // }
 
   // Find if the user exists in the database 
   UserModel.findOne({email})
@@ -133,8 +134,5 @@ router.post('/signin', (req, res) => {
 
 });
 
-router.get('/profile', (req, res) => {
-    res.render('users/profile.hbs', {userData: req.session.loggedInUser});
-})
 
 module.exports = router;

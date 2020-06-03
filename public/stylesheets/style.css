@@ -23,7 +23,8 @@ form label {
 }
 
 form input,
-form button {
+form button ,
+form select{
   box-sizing: border-box;
   font-size: 14px;
   outline: 0;
@@ -53,6 +54,12 @@ form button:hover {
   transition: 0.3s ease background;
 }
 
+.inline{
+  display: inline;
+}
+.search{
+  display: inline;
+}
 .error {
   background: #f02b63;
   box-sizing: border-box;

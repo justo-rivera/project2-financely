@@ -1,12 +1,21 @@
 
 
-<form method="POST" action="/signup">
-    <label for="username">Username</label>
-    <input type="text" name="username" id="username" >
+<form method="POST" action="/auth/signup">
+    <label for="username">Name</label>
+    <input type="text" name="name" id="username" >
     <label for="user-email">Email</label>
     <input type="email" name="email" id="user-email" >
     <label for="user-pass">Password</label>
     <input type="password" name="password" id="user-pass" >
+    <label for="user-pass">Credit Card</label>
+    <input type="creditcard" name="creditCard" id="user-card" >
+    <label for="experience">Trading Experience</label>
+    <select name="experience" id="cars">
+    <option value="Zero experience">Zero Experience</option>
+    <option value="Some experience">Some Experience</option>
+    <option value="Professional">Professional</option>
+    <option value="Broker">Broker</option>
+    </select>
     <button type="submit" >Sign Up</button>
 </form>
 

@@ -1,24 +1,38 @@
 const { Schema, model } = require('mongoose');
-
 const userSchema = new Schema(
   {
-     username: {
-       type: String,
-       required: [true, 'Please enter username']
-     }, 
-     email: {
-      type: String,
-      required: [true, 'Please enter email']
-    },
-     passwordHash: {
+    name: {
       type: String,
       required: true
+    },
+    email: {
+      type: String,
+      required: true
+    },
+    passwordHash: {
+      type: String,
+      required: true
+    },
+    creditCard: {
+      type: String
+    },
+    experience: {
+      type: String,
+      required: true,
+      enum: ['Zero experience', 'Some experience', 'Professional', 'Broker']
+    },
+    transactions: {
+      type: [Schema.Types.ObjectId],
+      ref: 'transaction'
+    },
+    favorites: {
+      type: [Schema.Types.ObjectId],
+      ref: 'favorites'
     }
   },
   {
     timestamps: true
   }
-);
-userSchema.index({ 'email': 1}, {unique: true});
-userSchema.index({ 'username': 1}, {unique: true});
+)
+
  module.exports = model('User', userSchema);
