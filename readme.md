@@ -1,5 +1,5 @@
-# Project Name
-Financely
+# Financely
+
 
 ## Description
 A simple website/application to buy and sell stock shares.
@@ -128,6 +128,16 @@ Transaction model
   }
 )
 favoriteSchema = new Schema({
+  symbol: String
+}
+)
+``` 
+
+```
+Favourite model
+
+```
+{
   symbol: String
 }
 )
