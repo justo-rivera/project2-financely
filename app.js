@@ -13,7 +13,7 @@ const hbs = require('hbs');
 const mongoose = require('mongoose');
 
 // Set up the database
-require('./configs/db.config');
+ require('./configs/db.config');
 
 // Routers
 const indexRouter = require('./routes/index.routes');

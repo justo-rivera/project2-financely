@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const UserModel = require('../models/User.model');
 
+
 router.get('/signup', (req, res) => {
     res.render('auth/signup.hbs');
 });
@@ -45,7 +46,7 @@ router.post('/signup', (req, res) => {
           .then((passwordHash) => {
             UserModel.create({name, email, creditCard, experience, passwordHash})
               .then(() => {
-                res.redirect('/profile');
+                res.redirect('/');
               })
               .catch((err) => {
                 if (err.code === 11000) {
