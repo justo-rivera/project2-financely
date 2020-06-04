@@ -84,11 +84,17 @@ Homepage
 User model
  
 ```
+const userSchema = new Schema(
+  {
     name: {
       type: String,
       required: true
     },
     email: {
+      type: String,
+      required: true
+    },
+    passwordHash: {
       type: String,
       required: true
     },
@@ -100,14 +106,12 @@ User model
       required: true,
       enum: ['Zero experience', 'Some experience', 'Professional', 'Broker']
     },
-    transactions: {
-      type: [Schema.Types.ObjectId],
-      ref: 'transaction'
-    },
     favorites: {
-      type: [Schema.Types.ObjectId],
-      ref: 'favorites'
+      type: [String],
     }
+  },
+  {
+    timestamps: true
   }
 )
 
@@ -115,32 +119,30 @@ User model
 Transaction model
 
 ```
-
-    symbol: {
-      type: String,
-      required: true
+const transactionSchema = new Schema(
+    {
+      symbol: {
+        type: String,
+        required: true
+      },
+      entryPrice: {
+        type: Number,
+        required: true
+      },
+      shares: {
+        type: Number,
+        required: true
+      },
+      exitPrice: Number,
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+      }
     },
-    entryPrice: {
-      type: Number,
-      required: true
-    },
-    exitPrice: Number
-  }
-)
-favoriteSchema = new Schema({
-  symbol: String
-}
-)
-``` 
-
-```
-Favourite model
-
-```
-{
-  symbol: String
-}
-)
+    {
+        timestamps: true
+    }
+  )
 ``` 
 
 ## Links

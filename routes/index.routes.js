@@ -23,7 +23,7 @@ router.get('/stocks', (req, res) => {
         res.send('Login first')
         return
     }
-    const id = req.session.loggedInUser._id;
+    const id = req.session.id;
     SessionModel.findById(id)
         .then( res => console.log(res))
         .catch( err => console.error(err))
@@ -34,7 +34,6 @@ router.get('/stocks', (req, res) => {
 
    Promise.all(promises)
        .then((results)=>{
-           console.log(results)
            res.render('stocks', {/*userData, */results: results}); 
        })
        .catch((err)=>console.log(err))
@@ -47,6 +46,28 @@ router.get('/stock', (req, res) => {
             res.render('stock', {/*userData, */stockData: data});
         })
         .catch(()=>res.send('error '+symbol+' not found'))
+})
+router.post('/buy', (req, res) => {
+    const {symbol, price, shares} = req.body;
+    const {userData} = req.session.loggedInUser;
+    TransactionModel.create({
+        symbol,
+        entryPrice: price,
+        shares,
+        user: userData._id
+    })
+        .then( () => {
+            res.redirect('profile/transactions')
+        })
+        .catch( err => console.error(err))
+})
+router.get('/profile/transactions', (req, res) => {
+    const {userData} = req.session.loggedInUser;
+    TransactionModel.find({user: userData._id})
+        .then( transactions => {
+            res.render('users/transactions', {transactions})
+        })
+        .catch( err => console.error(err))
 })
 router.get('/profile', (req, res) => {
     res.render('users/profile.hbs', {userData: req.session.loggedInUser});
