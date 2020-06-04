@@ -8,11 +8,13 @@
             <th></th>
         </tr>
     </thead>
+         {{#each results}}
                 <tr>
-                <td>{{stockData.symbol}}</td>
-                <td>{{stockData.companyName}}</td>
-                <td>{{stockData.latestPrice}}</td>
-                <td>{{stockData.changePercent}}</td>
+                <td>{{this.data.symbol}}</td>
+                <td>{{this.data.companyName}}</td>
+                <td>{{this.data.latestPrice}}</td>
+                <td>{{this.data.changePercent}}</td>
                 </tr>
+            {{/each}}
         
 </table>
