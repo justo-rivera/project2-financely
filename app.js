@@ -13,7 +13,7 @@ const hbs = require('hbs');
 const mongoose = require('mongoose');
 
 // Set up the database
-// require('./configs/db.config');
+ require('./configs/db.config');
 
 // Routers
 const indexRouter = require('./routes/index.routes');
@@ -36,23 +36,23 @@ app.use(logger('dev'));
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 
-// app.use(
-//   session({
-//     secret: 'my-secret-weapon',
-//     saveUninitialized: false,
-//     resave: true,
-//     cookie: {
-//       maxAge: 60 * 60 * 24 * 1000, //60 sec * 60 min * 24hrs = 1 day (in milliseconds)
-//     },
-//     store: new MongoStore({
-//       url: 'mongodb://localhost/financely',
-//       // mongooseConnection: mongoose.connection
-//       //time to live (in seconds)
-//       ttl: 60 * 60 * 24,
-//       autoRemove: 'disabled',
-//     }),
-//   })
-// );
+app.use(
+  session({
+    secret: 'my-secret-weapon',
+    saveUninitialized: false,
+    resave: true,
+    cookie: {
+      maxAge: 60 * 60 * 24 * 1000, //60 sec * 60 min * 24hrs = 1 day (in milliseconds)
+    },
+    store: new MongoStore({
+      url: 'mongodb://localhost/financely',
+      // mongooseConnection: mongoose.connection
+      //time to live (in seconds)
+      ttl: 60 * 60 * 24,
+      autoRemove: 'disabled',
+    }),
+  })
+);
 
 // a body parser to allow us to parse form submissions
 app.use(express.json());
