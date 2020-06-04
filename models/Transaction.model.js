@@ -15,6 +15,11 @@ const transactionSchema = new Schema(
         required: true
       },
       exitPrice: Number,
+      closed: {
+        type: Boolean,
+        default: false
+      },
+      profit: Number,
       user: {
         type: Schema.Types.ObjectId,
         ref: 'User'

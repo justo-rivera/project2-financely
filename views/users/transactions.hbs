@@ -1,6 +1,41 @@
+<table class="table">
+    <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>Company</th>
+            <th>Buy Price</th>
+            <th>No. of shares</th>
+            <th>Current Price</th>
+            <th>Profit</th>
+            <th></th>
+        </tr>
+    </thead>
 {{#each transactions}}
-  <table class="table">
     <tr>
       <td>{{this.symbol}}</td>
+      <td>{{this.companyName}}</td>
+      <td>${{this.entryPrice}}</td>
+      <td>{{this.shares}}</td>
+      <td>${{this.currentPrice}}</td>
+      <td>
+        <span style="color:{{#if positiveProfit}}green{{else}}red{{/if}};">
+        ${{this.profit}}
+        </span>
+        </td>
+      <td>
+        {{#if this.closed}}
+        CLOSED
+        {{else}}
+        <form class="inline" action="/sell" method="POST">
+        <input type="hidden" name="symbol" value="{{this.symbol}}">
+        <input type="hidden" name="shares" value="{{this.shares}}">
+        <input type="hidden" name="currentPrice" value="{{this.currentPrice}}">
+        <input type="hidden" name="profit" value="{{this.profit}}">
+        <input type="hidden" name="transactionId" value="{{this._id}}">
+        <button class="btn btn-primary">SELL</button>
+        </form>
+        {{/if}}
+      </td>
     </tr>
+{{/each}}
   </table>

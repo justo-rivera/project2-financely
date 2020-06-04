@@ -16,6 +16,10 @@ const userSchema = new Schema(
     creditCard: {
       type: String
     },
+    money: {
+      type: Number,
+      default: 0
+    },
     experience: {
       type: String,
       required: true,
