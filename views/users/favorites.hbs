@@ -1,0 +1,37 @@
+<table class="table">
+    <span>These are your favourite stocks</span>
+    <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>Company</th>
+            <th>Primary Exchange</th>
+            <th>Price</th>
+            <th>Change (%)</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+                  {{#each userData.favorites}}
+                    <tr>
+                      <td>{{this}}</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    <td>    
+                    <form action="/favorites" method="POST">
+                    <label for="favourite" >
+                    <input type="hidden" name="symbol" value="{{this}}">
+                    <input type="hidden" name="remove" value='remove'>
+                    <i class="glyphicon glyphicon-star-empty"></i>
+                    <i class="glyphicon glyphicon-star"></i>
+                    <button type="submit" class="btn btn-primary">REMOVE FAVORITE</button>
+                    </form>
+                    </form>
+                    </label>
+                    </td>
+                      
+                    </tr>
+                  {{/each}}
+        
+</table>
