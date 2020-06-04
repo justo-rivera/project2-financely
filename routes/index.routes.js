@@ -4,7 +4,6 @@ const axios = require('axios');
 const UserModel = require('../models/User.model')
 const SessionModel = require('../models/Session.model')
 const TransactionModel = require('../models/Transaction.model')
-const FavoriteModel = require('../models/Favorite.model')
 const nasdaqStocks = require('../info/nasdaq')
 const nyseStocks = require('../info/nyse')
 
@@ -16,7 +15,7 @@ let stockData = []
 /* GET home page */
 router.get('/', (req, res) => {
   
-    res.render('index', { title: 'financely 🚀' })
+    res.render('index')
 });
 
 router.get('/stocks', (req, res) => {
@@ -31,14 +30,6 @@ router.get('/stocks', (req, res) => {
     promises = nasdaqStocks.map((elem)=>{
 
         return axios.get(`https://cloud.iexapis.com/stable/stock/${elem}/quote?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
-           // .then( ({data}) => {
-           //     stockData.push({data});
-           //     return 
-           // })
-           // .catch((err)=>{
-           //     console.log(err)
-           // })
-           //.catch(()=>res.send('error '+elem+' not found'))
    })
 
    Promise.all(promises)

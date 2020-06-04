@@ -21,13 +21,8 @@ const userSchema = new Schema(
       required: true,
       enum: ['Zero experience', 'Some experience', 'Professional', 'Broker']
     },
-    transactions: {
-      type: [Schema.Types.ObjectId],
-      ref: 'transaction'
-    },
     favorites: {
-      type: [Schema.Types.ObjectId],
-      ref: 'favorites'
+      type: [String],
     }
   },
   {

@@ -10,7 +10,13 @@ const transactionSchema = new Schema(
         type: Number,
         required: true
       },
-      exitPrice: Number
+      exitPrice: Number,
+
+      user:{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+      }
+
     },
     {
         timestamps: true
