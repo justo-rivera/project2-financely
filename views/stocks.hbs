@@ -14,6 +14,14 @@
                 <td>{{this.data.companyName}}</td>
                 <td>{{this.data.latestPrice}}</td>
                 <td>{{this.data.changePercent}}</td>
+                <td>
+                    <form action="/buy" method="POST">
+                    <input type="hidden" name="price" value="{{this.data.latestPrice}}">
+                    <input type="hidden" name="symbol" value="{{this.data.symbol}}">
+                    <input type="number" name="shares" value="0">
+                    <button type="submit" class="btn btn-primary">BUY</button>
+                    </form>
+                </td>
                 </tr>
             {{/each}}
         
