@@ -24,3 +24,24 @@
                 </tr>
         
 </table>
+<h2>{{stockData.companyName}} ({{companyData.exchange}})</h2>
+<p>
+    <a href="{{companyData.website}}" target="_blank">
+        {{companyData.website}}
+    </a>
+</p>
+<p>{{companyData.description}}</p>
+<p>CEO: {{companyData.CEO}}</p>
+<p>Employees: {{companyData.employees}}</p>
+<br/>
+<h2>Latest {{stockData.symbol}} news</h2>
+{{#each news}}
+    <h5>
+        <a href="{{this.url}}" target="_blank">
+            {{this.headline}}
+        </a>
+    </h5>
+    <p>
+        {{this.summary}}
+    </p>
+{{/each}}

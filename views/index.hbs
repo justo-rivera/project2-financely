@@ -3,3 +3,18 @@
 <div class="home-page">
   <h1>TRADE STOCKS EASILY AND SECURILY WITH FINANCELY</h1>
 </div>
+<div class="news">
+  {{#each favoriteNews}}
+    <h2>Latest {{this.symbol}} news</h2>
+    {{#each this.news}}
+        <h5>
+        <a href="{{this.url}}" target="_blank">
+            {{this.headline}}
+        </a>
+    </h5>
+    <p>
+        {{this.summary}}
+    </p>
+    {{/each}}
+  {{/each}}
+</div>

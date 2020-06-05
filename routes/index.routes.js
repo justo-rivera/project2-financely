@@ -13,7 +13,35 @@ let stockData = []
 
 /* GET home page */
 router.get('/', (req, res) => {
-    res.render('index')
+    const {_id: userId} = req.session.loggedInUser;
+    let promises;
+    let favoriteNews = [];
+    if(!userId){
+        res.redirect('/auth/signin')
+    }
+    else{
+        UserModel.findById(userId)
+        .then( ({favorites}) => {
+            let promises = favorites.map( fav =>{
+                return axios.get(`https://cloud.iexapis.com/stable/stock/${fav}/news/last/2?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+                .then( ({data: news}) => {
+                    console.log(news)
+                    favoriteNews.push({symbol: fav, news})
+                })
+                .catch(err=>{
+                    console.error(err)
+                })
+                })
+
+            Promise.all(promises)
+            .then( () => {
+                console.log(favoriteNews)
+                res.render('index.hbs', {favoriteNews})
+            })
+            .catch( err => console.error(err))
+        })
+            .catch( err=> console.error(err))
+    }
 });
 
 router.get('/stocks', (req, res) => {
@@ -58,11 +86,43 @@ router.get('/stocks', (req, res) => {
 router.get('/stock', (req, res) => {
     const {symbol} = req.query;
     const {email, passwordHash} = req.session.loggedInUser;
-    axios.get(`https://cloud.iexapis.com/stable/stock/${symbol}/quote?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
-        .then( ({data}) => {
-            res.render('stock', {/*userData, */stockData: data});
+    let error = false;
+    let data = {stockData: '', companyData: '', error, news: []}
+    let promises = []
+    promises.push(
+        axios.get(`https://cloud.iexapis.com/stable/stock/${symbol}/quote?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+        .then( ({data: stockData}) => {
+            data.stockData = stockData;
         })
-        .catch(()=>res.send('error '+symbol+' not found'))
+        .catch(err=>{
+            console.error(err)
+            error += 'stock info for '+symbol+' not found'
+        })
+    )
+    promises.push(
+        axios.get(`https://cloud.iexapis.com/stable/stock/${symbol}/company?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+        .then( ({data: companyData}) => {
+            data.companyData = companyData;
+        })
+        .catch(err=>{
+            console.error(err)
+        })
+    )
+    promises.push(
+        axios.get(`https://cloud.iexapis.com/stable/stock/${symbol}/news/last/4?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+        .then( ({data: news}) => {
+            data.news = news;
+        })
+        .catch(err=>{
+            console.error(err)
+        })
+    )
+
+    Promise.all(promises)
+        .then( () => {
+            res.render('stock', data)
+        })
+        .catch( err => console.error(err))
 })
 router.get('/profile/transactions', (req, res) => {
     const {_id: userId, email, passwordHash} = req.session.loggedInUser;
