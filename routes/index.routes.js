@@ -64,24 +64,15 @@ router.get('/stock', (req, res) => {
         })
         .catch(()=>res.send('error '+symbol+' not found'))
 })
-router.post('/buy', (req, res) => {
-    const {symbol, price, shares} = req.body;
-    const {_id, email, passwordHash} = req.session.loggedInUser;
-    TransactionModel.create({
-        symbol,
-        entryPrice: price,
-        shares,
-        user: _id
-    })
-        .then( () => {
-            res.redirect('profile/transactions')
-        })
-        .catch( err => console.error(err))
-})
 router.get('/profile/transactions', (req, res) => {
-    const {_id, email, passwordHash} = req.session.loggedInUser;
+    const {_id: userId, email, passwordHash} = req.session.loggedInUser;
+    let {error, success} = req.session
+    req.session.error = false
+    req.session.success = false
     const promises = [];
-    TransactionModel.find({user: _id})
+
+    TransactionModel.find({user: userId})
+        .populate('')
         .then( transactions => {
             for(let index in transactions){
                 promises.push(axios.get(`https://cloud.iexapis.com/stable/stock/${transactions[index].symbol}/quote?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
@@ -91,24 +82,59 @@ router.get('/profile/transactions', (req, res) => {
                         if(!transactions[index].closed){                            
                             transactions[index].profit = ( (data.latestPrice- transactions[index].entryPrice)*transactions[index].shares ).toFixed(2)
                         }
-                        transactions[index].positiveProfit = transactions[index].profit >= 0
+                        transactions[index].positiveProfit = transactions[index].profit >= 0;
                     })
                     .catch( err => console.error(err))
                 )
             }
             Promise.all(promises)
                 .then( () => {
-                    res.render('users/transactions', {transactions})
+                    UserModel.findById(userId)
+                        .then( ({money}) => {
+                            res.render('users/transactions', {transactions, error, success, money})
+                         } )
+                        .catch( err => console.error(err))
                 })
                 .catch( err => console.error(err))
         })
         .catch( err => console.error(err))
 })
+router.post('/buy', (req, res) => {
+    const {symbol, price, shares} = req.body;
+    const {_id: userId, email, passwordHash} = req.session.loggedInUser;
+    const transactionCost = -shares*price;
+    UserModel.findById(userId)
+        .then( user => {
+            if(user.money >= -transactionCost){
+                TransactionModel.create({
+                    symbol,
+                    entryPrice: price,
+                    shares,
+                    user: userId
+                })
+                    .then( () => {
+                        UserModel.findByIdAndUpdate(userId, {$inc: {money: transactionCost }})
+                            .then( () => {
+                                req.session.success = `You bought ${shares} shares of ${symbol}!`
+                                res.redirect('profile/transactions')
+                            })
+                            .catch( err => console.error(err))
+                    })
+            }
+            else{
+                req.session.error = 'Not enough money...'
+                res.redirect('profile/transactions')
+            }
+        })
+        .catch( err => console.error(err))
+})
 router.post('/sell', (req, res) => {
-    const {transactionId, profit, currentPrice} = req.body
+    const {transactionId, profit, currentPrice, shares} = req.body
+    const {_id: userId} = req.session.loggedInUser
+    const closeTransactionPrice = shares*currentPrice
     TransactionModel.findByIdAndUpdate(transactionId, {$set: {exitPrice: currentPrice, profit, closed: true}})
         .then( () => {
-            UserModel.findByIdAndUpdate(req.session.loggedInUser._id, {$add: {profit}} )
+            UserModel.findByIdAndUpdate(userId, {$inc: {money: closeTransactionPrice}} )
                 .then( () => {
                     res.redirect('profile/transactions')
                 })
@@ -117,9 +143,23 @@ router.post('/sell', (req, res) => {
         .catch( err => console.error(err))
 })
 router.get('/profile', (req, res) => {
-    res.render('users/profile.hbs', {userData: req.session.loggedInUser});
+    const {_id: userId} = req.session.loggedInUser;
+    UserModel.findById(userId)
+        .then( userData => {
+            res.render('users/profile.hbs', {userData});
+        })
+        .catch( err => console.error(err))
 })
 
+router.post('/profile/add-funds', (req, res) => {
+    const {_id: userId} = req.session.loggedInUser;
+    const {dollars} = req.body
+    UserModel.findByIdAndUpdate(userId, {$inc: { money: dollars} })
+        .then( () => 
+            res.redirect('/profile')
+        )
+        .catch( err => console.error(err))
+})
 router.get('/favorites',(req,res)=>{
     res.render('users/favorites.hbs',{userData: req.session.loggedInUser})
 })

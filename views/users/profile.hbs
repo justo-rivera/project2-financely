@@ -2,11 +2,13 @@
 
 {{#if userData}}
 
-<p>Hello {{userData.name}}</p>
-
-{{/if}}
+  <p>Hello {{userData.name}}</p>
+  <p>Your email is {{userData.email}} and you have ${{userData.money}} left in your account</p>
+  <form action="/profile/add-funds" method="POST">
+  <p>Add <input type="number" name="dollars"> $ from your credit card ({{userData.creditCard}})
+  <button type="submit" class="btn btn-primary">ADD FUNDS</button>
+  </p>
+  </form>
 
 <a href="/favorites">Go and check your favorite stocks</a>
-
-
-
+{{/if}}
