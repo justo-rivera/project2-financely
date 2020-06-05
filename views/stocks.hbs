@@ -23,19 +23,20 @@
                     <button type="submit" class="btn btn-primary">BUY</button>
                     </form>
                 </td>
-                <td>    
-                    <form action="/favorites" method="POST">
-                    <label for="favourite" >
-                    <input type="hidden" name="symbol" value="{{this.data.symbol}}">
-                    <input type="hidden" name="remove" value='notRemove'>
-                    <i class="glyphicon glyphicon-star-empty"></i>
-                    <i class="glyphicon glyphicon-star"></i>
-                    <button type="submit" class="btn btn-primary">ADD TO FAVOURITE</button>
-                    </form>
-                    </form>
-                    </label>
-                </td>
+                {{#if this.data.notFavorite}}
+                    <td>    
+                        <form action="/favorites" method="POST">
+                        <label for="favourite" >
+                        <input type="hidden" name="symbol" value="{{this.data.symbol}}">
+                        <input type="hidden" name="remove" value='notRemove'>
+                        <i class="glyphicon glyphicon-star-empty"></i>
+                        <i class="glyphicon glyphicon-star"></i>
+                        <button type="submit" class="btn btn-primary">ADD TO FAVOURITE</button>
+                        </form>
+                        </label>
+                    </td> 
+                {{/if}}
                 </tr>
-            {{/each}}
+        {{/each}}
         
 </table>

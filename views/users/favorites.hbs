@@ -11,17 +11,18 @@
             <th></th>
         </tr>
     </thead>
-                  {{#each userData.favorites}}
+                  {{#each stockI}}
                     <tr>
-                      <td>{{this}}</td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
+                      <td>{{this.data.symbol}}</td>
+                      <td>{{this.data.companyName}}</td>
+                       <td>{{this.data.primaryExchange}}</td>
+                      <td>{{this.data.latestPrice}}</td>
+                      <td>{{this.data.changePercent}}</td>
+                      
                     <td>    
                     <form action="/favorites" method="POST">
                     <label for="favourite" >
-                    <input type="hidden" name="symbol" value="{{this}}">
+                    <input type="hidden" name="symbol" value="{{this.data.symbol}}">
                     <input type="hidden" name="remove" value='remove'>
                     <i class="glyphicon glyphicon-star-empty"></i>
                     <i class="glyphicon glyphicon-star"></i>

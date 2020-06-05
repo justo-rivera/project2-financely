@@ -13,7 +13,6 @@ let stockData = []
 
 /* GET home page */
 router.get('/', (req, res) => {
-  
     res.render('index')
 });
 
@@ -23,19 +22,38 @@ router.get('/stocks', (req, res) => {
         return
     }
     const id = req.session.id;
-    SessionModel.findById(id)
-        .then( res => console.log(res))
-        .catch( err => console.error(err))
     let promises = nasdaqStocks.map((elem)=>{
-
         return axios.get(`https://cloud.iexapis.com/stable/stock/${elem}/quote?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
    })
 
    Promise.all(promises)
        .then((results)=>{
-           res.render('stocks', {/*userData, */results: results}); 
-       })
-       .catch((err)=>console.log(err))
+           
+           let arrPromises = results.map((element, index) => {
+                element.data.notFavorite = true;
+                console.log(element.data)
+                return UserModel.findById(req.session.loggedInUser._id)
+                .then( user => {
+                    user.favorites.forEach((elem)=>{
+                        console.log('Element is ', elem)
+                        
+                        if(elem === element.data.symbol){
+                            element.data.notFavorite = false;
+                        }
+                    })
+                    console.log('Hello')
+                    //res.render('stocks',{results})
+                })
+                .catch( err => res.send(err))
+            })
+            Promise.all(arrPromises)
+                .then(() => {
+                    
+                    console.log('HELLO', results[0].data.notFavorite)
+                    res.render('stocks',{results})
+                })
+        })
+       .catch((error)=>res.send(error))
 })
 router.get('/stock', (req, res) => {
     const {symbol} = req.query;
@@ -108,41 +126,74 @@ router.get('/favorites',(req,res)=>{
 
 router.post('/favorites',(req,res)=>{
     let {symbol,remove} = req.body
-    console.log(symbol)
     const id = req.session.loggedInUser._id;
-    console.log(id)
+
+    if(!req.session.loggedInUser){
+        res.send('Login first')
+        return
+    }
+    console.log(req.session.loggedInUser._id)
     if(remove === 'notRemove'){
-        console.log('here')
+        
         UserModel.updateOne({_id:id},{ $push: {favorites: symbol}
         })
             .then((response)=>{
                 UserModel.findOne({_id:id})
                     .then((updatedUser)=>{
-                        console.log(updatedUser)
                         req.session.loggedInUser= updatedUser;
-                        res.render('users/favorites',{userData:req.session.loggedInUser})
+                        console.log(updatedUser)
+                        UserModel.findById(updatedUser._id)
+                            .then((user)=>{
+                                console.log(user.favorites)
+                                
+                                let promises = user.favorites.map((elem)=>{
+                                    if(elem!==null){
+                                        return axios.get(`https://cloud.iexapis.com/stable/stock/${elem}/quote?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+                                    }
+                                })
+                                Promise.all(promises)
+                                    .then((stockI)=>{
+                                        res.render('users/favorites',{stockI})
+                                    })
+                                    .catch((err)=>{
+                                        console.log(err)
+                                    })
+                            })
+                            .catch((err)=>console.log('cannot find user'))
                     })
             })
             .catch((err)=>{
                 console.log(err)
             })
     }else{
-        console.log('here2')
-        UserModel.updateOne({_id:id},{ $pull: {favorites: symbol}
-        })
-            .then((response)=>{
-                UserModel.findOne({_id:id})
-                    .then((updatedUser)=>{
-                        console.log(updatedUser)
-                        req.session.loggedInUser= updatedUser;
-                        res.render('users/favorites',{userData:req.session.loggedInUser})
-                    })
-
+            UserModel.updateOne({_id:id},{ $pull: {favorites: symbol}
             })
-            .catch((err)=>{
-                console.log(err)
-            })
-    }
+                .then((response)=>{
+                    console.log(response)
+                    UserModel.findOne({_id:id})
+                        .then((updatedUser)=>{
+                            req.session.loggedInUser= updatedUser;
+                            //console.log(updatedUser)
+                            UserModel.findById(updatedUser._id)
+                                .then((user)=>{
+                                    //console.log(user.favorites)
+                                    let promises = user.favorites.map((elem)=>{
+                                        return axios.get(`https://cloud.iexapis.com/stable/stock/${elem}/quote?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+                                    })
+                                    Promise.all(promises)
+                                        .then((stockI)=>{
+                                            res.render('users/favorites',{stockI})
+                                        })
+                                        .catch((err)=>{
+                                            console.log(err)
+                                        })
+                                })
+                        })
+                })
+                .catch((err)=>{
+                    console.log(err)
+                })
+        }
 
     
 })
