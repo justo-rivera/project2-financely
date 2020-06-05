@@ -13,35 +13,34 @@ let stockData = []
 
 /* GET home page */
 router.get('/', (req, res) => {
+    if(!req.session.loggedInUser){
+        res.redirect('/auth/signin')
+        return
+    }
     const {_id: userId} = req.session.loggedInUser;
     let promises;
     let favoriteNews = [];
-    if(!userId){
-        res.redirect('/auth/signin')
-    }
-    else{
-        UserModel.findById(userId)
-        .then( ({favorites}) => {
-            let promises = favorites.map( fav =>{
-                return axios.get(`https://cloud.iexapis.com/stable/stock/${fav}/news/last/2?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
-                .then( ({data: news}) => {
-                    console.log(news)
-                    favoriteNews.push({symbol: fav, news})
-                })
-                .catch(err=>{
-                    console.error(err)
-                })
-                })
-
-            Promise.all(promises)
-            .then( () => {
-                console.log(favoriteNews)
-                res.render('index.hbs', {favoriteNews})
+    UserModel.findById(userId)
+    .then( ({favorites}) => {
+        let promises = favorites.map( fav =>{
+            return axios.get(`https://cloud.iexapis.com/stable/stock/${fav}/news/last/2?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+            .then( ({data: news}) => {
+                console.log(news)
+                favoriteNews.push({symbol: fav, news})
             })
-            .catch( err => console.error(err))
+            .catch(err=>{
+                console.error(err)
+            })
+            })
+
+        Promise.all(promises)
+        .then( () => {
+            console.log(favoriteNews)
+            res.render('index.hbs', {favoriteNews})
         })
-            .catch( err=> console.error(err))
-    }
+        .catch( err => console.error(err))
+    })
+        .catch( err=> console.error(err))
 });
 
 router.get('/stocks', (req, res) => {
@@ -224,9 +223,6 @@ router.post('/profile/add-funds', (req, res) => {
         )
         .catch( err => console.error(err))
 })
-router.get('/favorites',(req,res)=>{
-    res.render('users/favorites.hbs',{userData: req.session.loggedInUser})
-})
 
 router.post('/favorites',(req,res)=>{
     let {symbol,remove} = req.body
@@ -302,6 +298,32 @@ router.post('/favorites',(req,res)=>{
     
 })
 
+router.get('/favorites',(req,res)=>{
+
+    if(!req.session.loggedInUser){
+        res.send('Login first')
+        return
+    }
+    const id = req.session.loggedInUser._id;
+    UserModel.findById(id)
+        .then((user)=>{
+            console.log(user.favorites)
+            
+            let promises = user.favorites.map((elem)=>{
+                if(elem!==null){
+                    return axios.get(`https://cloud.iexapis.com/stable/stock/${elem}/quote?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+                }
+            })
+            Promise.all(promises)
+                .then((stockI)=>{
+                    res.render('users/favorites',{stockI})
+                })
+                .catch((err)=>{
+                    console.log(err)
+                })
+        })
+        .catch((err)=>console.log('cannot find user'))
+})
 
 router.get(('/auth/logout'), (req,res)=>{
     UserModel.findById(req.session.loggedInUser._id)
