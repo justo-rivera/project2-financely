@@ -143,6 +143,10 @@ router.post('/sell', (req, res) => {
         .catch( err => console.error(err))
 })
 router.get('/profile', (req, res) => {
+    if(!req.session.loggedInUser){
+        res.render('users/profile.hbs')
+        return
+    }
     const {_id: userId} = req.session.loggedInUser;
     UserModel.findById(userId)
         .then( userData => {
@@ -236,5 +240,21 @@ router.post('/favorites',(req,res)=>{
         }
 
     
+})
+
+
+router.get(('/auth/logout'), (req,res)=>{
+    UserModel.findById(req.session.loggedInUser._id)
+        .then((user)=>{
+            res.render('./auth/logout.hbs',{user})
+        })
+        .catch((err)=>{
+            console.log('no user found')
+        })
+})
+router.post(('/auth/logout'), (req,res)=>{
+    let {id} = req.body
+    req.session.destroy()
+    res.render('users/profile')
 })
 module.exports = router;

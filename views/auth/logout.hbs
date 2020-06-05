@@ -1,0 +1,8 @@
+<div>
+  <form action="/auth/logout" method="POST">
+
+  <label for="logout">Hey {{user.name}} are you sure you want to log out ?</label>
+  <input type="hidden" name="id" value={{this._id}}>
+  <button type="submit" >Yes, log out</button>
+  </form>
+</div>

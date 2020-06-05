@@ -1,7 +1,10 @@
-<div>This is your profile page dude!!</div>
 
 {{#if userData}}
-
+  <ul>
+     <li >
+          <a class="logout-button" href="/auth/logout">LOGOUT</a> 
+      </li>
+  </ul>     
   <p>Hello {{userData.name}}</p>
   <p>Your email is {{userData.email}} and you have ${{userData.money}} left in your account</p>
   <form action="/profile/add-funds" method="POST">
@@ -11,4 +14,12 @@
   </form>
 
 <a href="/favorites">Go and check your favorite stocks</a>
+{{else}}
+<ul >
+     <li class="account-page">
+          <a  href="/auth/signup">Signup <span>|</span></a>
+          <a   href="/auth/signin">Sign In</a> 
+     </li>
+          
+  </ul>
 {{/if}}
