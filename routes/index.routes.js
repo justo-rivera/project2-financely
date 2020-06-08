@@ -14,7 +14,7 @@ let stockData = []
 /* GET home page */
 router.get('/', (req, res) => {
     if(!req.session.loggedInUser){
-        res.redirect('/auth/signin')
+        res.redirect('/profile')
         return
     }
     const {_id: userId} = req.session.loggedInUser;
