@@ -331,7 +331,7 @@ router.post('/profile/add-funds', (req, res) => {
         return
     }
     const {_id: userId} = req.session.loggedInUser;
-    const dollars = Number((req.body.dollars).toFixed(2));
+    const {dollars} =req.body;
     UserModel.findByIdAndUpdate(userId, {$inc: { money: dollars} })
         .then( () => 
             res.redirect('/profile')
