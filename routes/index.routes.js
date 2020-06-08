@@ -45,7 +45,7 @@ router.get('/', (req, res) => {
 
 router.get('/stocks', (req, res) => {
     if(!req.session.loggedInUser){
-        res.send('Login first')
+        res.redirect('/profile')
         return
     }
     const id = req.session.id;
@@ -76,6 +76,10 @@ router.get('/stocks', (req, res) => {
        .catch((error)=>res.send(error))
 })
 router.get('/stock', (req, res) => {
+    if(!req.session.loggedInUser){
+        res.redirect('/profile')
+        return
+    }
     const {symbol} = req.query;
     const {email, passwordHash} = req.session.loggedInUser;
     let error = false;
@@ -132,6 +136,10 @@ router.get('/stock', (req, res) => {
         .catch( err => console.error(err))
 })
 router.get('/profile/transactions', (req, res) => {
+    if(!req.session.loggedInUser){
+        res.redirect('/profile')
+        return
+    }
     const {_id: userId, email, passwordHash} = req.session.loggedInUser;
     let {error, success} = req.session
     req.session.error = false
@@ -167,6 +175,10 @@ router.get('/profile/transactions', (req, res) => {
         .catch( err => console.error(err))
 })
 router.post('/buy', (req, res) => {
+    if(!req.session.loggedInUser){
+        res.redirect('/profile')
+        return
+    }
     const {symbol, price, shares} = req.body;
     const {_id: userId, email, passwordHash} = req.session.loggedInUser;
     const transactionCost = -shares*price;
@@ -196,6 +208,10 @@ router.post('/buy', (req, res) => {
         .catch( err => console.error(err))
 })
 router.post('/sell', (req, res) => {
+    if(!req.session.loggedInUser){
+        res.redirect('/profile')
+        return
+    }
     const {transactionId, profit, currentPrice, shares} = req.body
     const {_id: userId} = req.session.loggedInUser
     const closeTransactionPrice = shares*currentPrice
@@ -223,6 +239,10 @@ router.get('/profile', (req, res) => {
 })
 
 router.post('/profile/add-funds', (req, res) => {
+    if(!req.session.loggedInUser){
+        res.redirect('/profile')
+        return
+    }
     const {_id: userId} = req.session.loggedInUser;
     const {dollars} = req.body
     UserModel.findByIdAndUpdate(userId, {$inc: { money: dollars} })
@@ -233,6 +253,10 @@ router.post('/profile/add-funds', (req, res) => {
 })
 
 router.post('/favorites',(req,res)=>{
+    if(!req.session.loggedInUser){
+        res.redirect('/profile')
+        return
+    }
     let {symbol,remove} = req.body
     const id = req.session.loggedInUser._id;
 
@@ -307,6 +331,10 @@ router.post('/favorites',(req,res)=>{
 })
 
 router.get('/favorites',(req,res)=>{
+    if(!req.session.loggedInUser){
+        res.redirect('/profile')
+        return
+    }
 
     if(!req.session.loggedInUser){
         res.send('Login first')
