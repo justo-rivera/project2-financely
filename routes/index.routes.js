@@ -58,6 +58,8 @@ router.get('/stocks', (req, res) => {
            
            let arrPromises = results.map((element, index) => {
                 element.data.notFavorite = true;
+                element.data.changePercent *= 100;
+                element.data.changeGreen = element.data.changePercent >= 0;
                 console.log(element.data)
                 return UserModel.findById(req.session.loggedInUser._id)
                 .then( user => {
@@ -96,6 +98,8 @@ router.get('/stock', (req, res) => {
         axios.get(`https://cloud.iexapis.com/stable/stock/${symbol}/quote?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
         .then( ({data: stockData}) => {
             data.stockData = stockData;
+            data.stockData.changePercent *= 100;
+            data.stockData.changeGreen = data.stockData.changePercent >= 0;
         })
         .catch(err=>{
             console.error(err)

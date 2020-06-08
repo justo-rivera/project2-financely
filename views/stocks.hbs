@@ -14,7 +14,8 @@
                 <td>{{this.data.symbol}}</td>
                 <td>{{this.data.companyName}}</td>
                 <td>{{this.data.latestPrice}}</td>
-                <td>{{this.data.changePercent}}</td>
+                <td><span style="color:{{#if this.data.changeGreen}}green;{{else}}red;{{/if}}">               
+                    {{this.data.changePercent}}%</span></td>
                 <td>
                     <form action="/buy" method="POST">
                     <input type="hidden" name="price" value="{{this.data.latestPrice}}">
