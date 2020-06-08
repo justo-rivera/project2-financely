@@ -55,28 +55,21 @@ router.get('/stocks', (req, res) => {
 
    Promise.all(promises)
        .then((results)=>{
-           
            let arrPromises = results.map((element, index) => {
                 element.data.notFavorite = true;
                 console.log(element.data)
                 return UserModel.findById(req.session.loggedInUser._id)
                 .then( user => {
                     user.favorites.forEach((elem)=>{
-                        console.log('Element is ', elem)
-                        
                         if(elem === element.data.symbol){
                             element.data.notFavorite = false;
                         }
                     })
-                    console.log('Hello')
-                    //res.render('stocks',{results})
                 })
                 .catch( err => res.send(err))
             })
             Promise.all(arrPromises)
                 .then(() => {
-                    
-                    console.log('HELLO', results[0].data.notFavorite)
                     res.render('stocks',{results})
                 })
         })
@@ -92,6 +85,7 @@ router.get('/stock', (req, res) => {
         axios.get(`https://cloud.iexapis.com/stable/stock/${symbol}/quote?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
         .then( ({data: stockData}) => {
             data.stockData = stockData;
+            
         })
         .catch(err=>{
             console.error(err)
@@ -116,6 +110,20 @@ router.get('/stock', (req, res) => {
             console.error(err)
         })
     )
+    data.notFavorite = true;
+    promises.push(
+         UserModel.findById(req.session.loggedInUser._id)
+                .then( user => {
+                    user.favorites.forEach((elem)=>{
+                        if(elem === symbol){
+                            data.notFavorite = false;
+                        }
+                    })
+                })
+                .catch( err => res.send(err))
+    )
+
+
 
     Promise.all(promises)
         .then( () => {
