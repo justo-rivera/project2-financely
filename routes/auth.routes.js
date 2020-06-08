@@ -52,7 +52,7 @@ router.post('/signup', (req, res) => {
                 if (err.code === 11000) {
                   res.status(500)
                   .render('auth/signup.hbs', {
-                    errorMessage: 'username or email entered already exists!'
+                    errorMessage: 'email entered already exists!'
                   });
                   return;  
                 } 
