@@ -16,10 +16,18 @@
 <a href="/favorites">Go and check your favorite stocks</a>
 {{else}}
 <ul >
-     <li class="account-page">
+     <!--<li class="account-page">
           <a  href="/auth/signup">Signup <span>|</span></a>
           <a   href="/auth/signin">Sign In</a> 
-     </li>
+     </li>-->
+     <form method="POST" action="/auth/signin">
+    <label for="user-email">Email</label>
+    <input type="email" name="email" id="user-email" >
+    <label for="user-pass">Password</label>
+    <input type="password" name="password" id="user-pass" >
+    <button type="submit" >Sign In</button>
+    </form>
+    <p class="center">Not a member? <a href="/auth/signup">Signup</a></p>
           
   </ul>
 {{/if}}
