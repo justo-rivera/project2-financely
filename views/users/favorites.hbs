@@ -13,11 +13,18 @@
     </thead>
                   {{#each stockI}}
                     <tr>
-                      <td>{{this.data.symbol}}</td>
+                      <td>
+                        <a href="/stock?symbol={{this.data.symbol}}">
+                        {{this.data.symbol}}
+                        </a>
+                      </td>
                       <td>{{this.data.companyName}}</td>
                        <td>{{this.data.primaryExchange}}</td>
-                      <td>{{this.data.latestPrice}}</td>
-                      <td>{{this.data.changePercent}}</td>
+                      <td>${{this.data.latestPrice}}</td>
+                      <td><span style="color:{{#if this.data.changeGreen}}green;{{else}}red;{{/if}}">
+                        {{this.data.changePercent}}%
+                        </span>
+                      </td>
                       
                     <td>    
                     <form action="/favorites" method="POST">

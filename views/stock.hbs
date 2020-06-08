@@ -1,3 +1,4 @@
+{{#if stockData.symbol}}
 <table class="table">
     <thead>
         <tr>
@@ -5,6 +6,7 @@
             <th>Company</th>
             <th>Price</th>
             <th>Change (%)</th>
+            <th>No. of shares</th>
             <th></th>
         </tr>
     </thead>
@@ -18,7 +20,10 @@
                     <form action="/buy" method="POST">
                     <input type="hidden" name="price" value="{{stockData.latestPrice}}">
                     <input type="hidden" name="symbol" value="{{stockData.symbol}}">
-                    <input type="number" name="shares" value="0">
+                    <input type="number" name="shares" value="0" onchange="displayPrice(Number(this.value)*Number({{stockData.latestPrice}}),'{{stockData.symbol}}-price')" class= 'form-control buy-input'>
+                    <p id="{{stockData.symbol}}-price"></p>
+                </td>
+                <td>
                     <button type="submit" class="btn btn-primary">BUY</button>
                     </form>
                 </td>
@@ -46,8 +51,12 @@
     </a>
 </p>
 <p>{{companyData.description}}</p>
+{{#if companyData.CEO}}
 <p>CEO: {{companyData.CEO}}</p>
+{{/if}}
+{{#if companyData.employees}}
 <p>Employees: {{companyData.employees}}</p>
+{{/if}}
 <br/>
 <h2>Latest {{stockData.symbol}} news</h2>
 {{#each news}}
@@ -60,3 +69,10 @@
         {{this.summary}}
     </p>
 {{/each}}
+{{else}}
+<h3>Symbol not found.. try again</h3>
+<form class="form-inline my-2 my-lg-0" action="/stock" method="GET">
+            <input class="form-control mr-sm-2"  name ='symbol' type="search" placeholder="Search a symbol" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+{{/if}}
+<script src="/javascripts/stocks.js"></script>

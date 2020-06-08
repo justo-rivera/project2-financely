@@ -48,6 +48,7 @@ router.get('/stocks', (req, res) => {
         res.redirect('/profile')
         return
     }
+    let moneyLeft = req.session.loggedInUser.money;
     const id = req.session.id;
     let promises = nasdaqStocks.map((elem)=>{
         return axios.get(`https://cloud.iexapis.com/stable/stock/${elem}/quote?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
@@ -58,10 +59,12 @@ router.get('/stocks', (req, res) => {
            let arrPromises = results.map((element, index) => {
                 element.data.notFavorite = true;
                 element.data.changePercent *= 100;
+                element.data.changePercent = element.data.changePercent.toFixed(2)
                 element.data.changeGreen = element.data.changePercent >= 0;
                 console.log(element.data)
                 return UserModel.findById(req.session.loggedInUser._id)
                 .then( user => {
+                    moneyLeft = Number((user.money).toFixed(2));
                     user.favorites.forEach((elem)=>{
                         if(elem === element.data.symbol){
                             element.data.notFavorite = false;
@@ -72,7 +75,7 @@ router.get('/stocks', (req, res) => {
             })
             Promise.all(arrPromises)
                 .then(() => {
-                    res.render('stocks',{results})
+                    res.render('stocks',{results, moneyLeft})
                 })
         })
        .catch((error)=>res.send(error))
@@ -92,6 +95,7 @@ router.get('/stock', (req, res) => {
         .then( ({data: stockData}) => {
             data.stockData = stockData;
             data.stockData.changePercent *= 100;
+            data.stockData.changePercent = data.stockData.changePercent.toFixed(2)
             data.stockData.changeGreen = data.stockData.changePercent >= 0;
         })
         .catch(err=>{
@@ -121,6 +125,7 @@ router.get('/stock', (req, res) => {
     promises.push(
          UserModel.findById(req.session.loggedInUser._id)
                 .then( user => {
+                    data.moneyLeft = Number((user.money).toFixed(2))
                     user.favorites.forEach((elem)=>{
                         if(elem === symbol){
                             data.notFavorite = false;
@@ -138,6 +143,28 @@ router.get('/stock', (req, res) => {
         })
         .catch( err => console.error(err))
 })
+
+
+router.post('/stocks',(req,res)=>{
+    let {symbol} = req.body;
+    
+    UserModel.updateOne({_id:req.session.loggedInUser._id},{ $pull: {favorites: symbol}
+    })
+        .then((response)=>{
+            UserModel.findOne({_id:req.session.loggedInUser._id})
+                .then((updatedUser)=>{
+                    req.session.loggedInUser= updatedUser;
+                    res.redirect('stocks')
+                })
+                .catch(()=>{
+                    console.log('id not found')
+                })
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
+    
+})
 router.get('/profile/transactions', (req, res) => {
     if(!req.session.loggedInUser){
         res.redirect('/profile')
@@ -150,7 +177,7 @@ router.get('/profile/transactions', (req, res) => {
     const promises = [];
 
     TransactionModel.find({user: userId})
-        .populate('')
+        .sort({ createdAt: -1})
         .then( transactions => {
             for(let index in transactions){
                 promises.push(axios.get(`https://cloud.iexapis.com/stable/stock/${transactions[index].symbol}/quote?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
@@ -161,6 +188,15 @@ router.get('/profile/transactions', (req, res) => {
                             transactions[index].profit = ( (data.latestPrice- transactions[index].entryPrice)*transactions[index].shares ).toFixed(2)
                         }
                         transactions[index].positiveProfit = transactions[index].profit >= 0;
+                        const now = new Date();
+                        let minutesPassed= (now - transactions[index].createdAt)/(60*1000)
+                        if(minutesPassed < 5){
+                            transactions[index].canUndo = true;
+                            transactions[index].timeLeft = 5 - Math.floor(minutesPassed)
+                        }
+                        else{
+                            transactions[index].canUndo = false;
+                        }
                     })
                     .catch( err => console.error(err))
                 )
@@ -184,7 +220,12 @@ router.post('/buy', (req, res) => {
     }
     const {symbol, price, shares} = req.body;
     const {_id: userId, email, passwordHash} = req.session.loggedInUser;
-    const transactionCost = -shares*price;
+    const transactionCost = Number((-shares*price).toFixed(2));
+    if(shares <= 0){
+        req.session.error = 'Can\'t buy 0 shares';
+        res.redirect('profile/transactions')
+        return
+    }
     UserModel.findById(userId)
         .then( user => {
             if(user.money >= -transactionCost){
@@ -217,7 +258,7 @@ router.post('/sell', (req, res) => {
     }
     const {transactionId, profit, currentPrice, shares} = req.body
     const {_id: userId} = req.session.loggedInUser
-    const closeTransactionPrice = shares*currentPrice
+    const closeTransactionPrice = Number((shares*currentPrice).toFixed(2))
     TransactionModel.findByIdAndUpdate(transactionId, {$set: {exitPrice: currentPrice, profit, closed: true}})
         .then( () => {
             UserModel.findByIdAndUpdate(userId, {$inc: {money: closeTransactionPrice}} )
@@ -240,14 +281,57 @@ router.get('/profile', (req, res) => {
         })
         .catch( err => console.error(err))
 })
-
+router.post('/undo', (req, res) => {
+    if(!req.session.loggedInUser){
+        res.render('users/profile.hbs')
+        return
+    }
+    const {_id: userId} = req.session.loggedInUser;
+    const {transactionId} = req.body;
+    const now = new Date();
+    TransactionModel.findById(transactionId)
+        .populate('')
+        .then( transaction => {
+            let minutesPassed= (now - transaction.createdAt)/(60*1000);           
+            if(transaction.user._id == userId){
+                if(minutesPassed < 5){
+                    let refund = Number((transaction.entryPrice * transaction.shares).toFixed(2));
+                    TransactionModel.findByIdAndDelete(transactionId)
+                        .then( response => {
+                            UserModel.findByIdAndUpdate(userId, {$inc: {money: refund}})
+                                .then( () => {
+                                    req.session.success = 'Transaction cancelled, you got $' + refund + ' back!';
+                                    res.redirect('/profile/transactions');
+                                })
+                                .catch( err => {
+                                    req.session.error = 'Couldn\'t refund your money... ' + err;
+                                    res.redirect('/profile/transactions')
+                                })
+                            
+                        })
+                        .catch( err => console.log(err))
+                }
+                else{
+                    req.session.error = 'Too late.. ' + Math.floor(minutesPassed) + ' minutes passed';
+                    res.redirect('/profile/transactions')
+                }
+            }
+            else{
+                console.log(transaction.user, transaction.user._id)
+                req.session.error = 'That transaction isn\'t yours...';
+                res.redirect('/profile/transactions')
+            }
+            
+        })
+        .catch( err => console.log(err))
+})
 router.post('/profile/add-funds', (req, res) => {
     if(!req.session.loggedInUser){
         res.redirect('/profile')
         return
     }
     const {_id: userId} = req.session.loggedInUser;
-    const {dollars} = req.body
+    const {dollars} = Number((req.body).toFixed(2));
     UserModel.findByIdAndUpdate(userId, {$inc: { money: dollars} })
         .then( () => 
             res.redirect('/profile')
@@ -288,6 +372,10 @@ router.post('/favorites',(req,res)=>{
                                 })
                                 Promise.all(promises)
                                     .then((stockI)=>{
+                                        stockI.forEach( elem => {
+                                        elem.data.changePercent = (elem.data.changePercent*100).toFixed(2);
+                                        elem.data.changeGreen = elem.data.changePercent >= 0;
+                                        })
                                         res.render('users/favorites',{stockI})
                                     })
                                     .catch((err)=>{
@@ -317,6 +405,10 @@ router.post('/favorites',(req,res)=>{
                                     })
                                     Promise.all(promises)
                                         .then((stockI)=>{
+                                            stockI.forEach( elem => {
+                                            elem.data.changePercent = (elem.data.changePercent*100).toFixed(2);
+                                            elem.data.changeGreen = elem.data.changePercent >= 0;
+                                            })
                                             res.render('users/favorites',{stockI})
                                         })
                                         .catch((err)=>{
@@ -355,6 +447,10 @@ router.get('/favorites',(req,res)=>{
             })
             Promise.all(promises)
                 .then((stockI)=>{
+                    stockI.forEach( elem => {
+                    elem.data.changePercent = (elem.data.changePercent*100).toFixed(2);
+                    elem.data.changeGreen = elem.data.changePercent >= 0;
+                    })
                     res.render('users/favorites',{stockI})
                 })
                 .catch((err)=>{

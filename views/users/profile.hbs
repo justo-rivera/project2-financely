@@ -1,19 +1,23 @@
 
 {{#if userData}}
-  <ul>
-     <li >
-          <a class="logout-button" href="/auth/logout">LOGOUT</a> 
-      </li>
-  </ul>     
-  <p>Hello {{userData.name}}</p>
-  <p>Your email is {{userData.email}} and you have ${{userData.money}} left in your account</p>
+<div class="profile">
+  <p>Hello {{userData.name}} ({{userData.email}})</p>
+  <p>You have ${{userData.money}} left in your account</p>
   <form action="/profile/add-funds" method="POST">
-  <p>Add <input type="number" name="dollars"> $ from your credit card ({{userData.creditCard}})
-  <button type="submit" class="btn btn-primary">ADD FUNDS</button>
-  </p>
+  <p>Add <input type="number" name="dollars" placeholder="e.g. 1000"> $ from your credit card ({{userData.creditCard}})</p>
+  <button type="submit" class="btn btn-outline-success">ADD FUNDS</button>
   </form>
+<br/>
+<br/>
+<br/>
 
-<a href="/favorites">Go and check your favorite stocks</a>
+</div>
+<a href="/profile/transactions">View your Portfolio</a>
+<br/>
+<a href="/favorites">Your watchlist</a>
+<br/>
+<br/>
+<a class="btn btn-danger" href="/auth/logout">LOGOUT</a>
 {{else}}
 <ul >
      <!--<li class="account-page">

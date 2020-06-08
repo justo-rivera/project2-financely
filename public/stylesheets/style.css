@@ -8,7 +8,15 @@ a {
   text-decoration: none;
   font-size: 1.5em;
 }
+.buy-input{
+  width : 130px;
+}
+.watchlist-image{
+  width: 40px;
+  height: 40px;
+}
 
+/*
 form {
   margin: 30px auto;
   width: 380px;
@@ -53,6 +61,7 @@ form button:hover {
   color: #43a3e6;
   transition: 0.3s ease background;
 }
+*/
 
 .inline{
   display: inline;
@@ -72,8 +81,9 @@ form button:hover {
 .center{
   text-align: center;
 }
+/*
 ul {
-  /* border-bottom: 2px solid #43a3e6; */
+  border-bottom: 2px solid #43a3e6;
   height: 30px;
   padding: 1em 0;
   list-style-type: none;
@@ -82,9 +92,10 @@ ul {
 ul li {
   line-height: 20px;
 }
+*/
 
 #to-right {
-  padding: 1em;
+  /*padding: 1em;*/
   float: right;
 }
 
@@ -109,17 +120,31 @@ ul li {
 }
 
 .home-page{
+  width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: center;
+  color: darkblue;
+  font-family: Arvo;
+    text-shadow:1px 1px 2px darkblue;
+   border: 1px solid darkblue;
+   border-radius: 5px;
+   background-color: lightyellow;
+   padding: 15px;
 }
 
+.undo{
+  border: 0px;
+}
 .logout-button{
   color: brown;
   border: 1px, solid,black;
-  float: right;
+  /*float: right;*/
 }
-
+.profile{
+  margin-top: 30px;
+  font-size: 18px;
+}
 .account-page{
     position: fixed;
     top: 50%;
