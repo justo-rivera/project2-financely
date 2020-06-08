@@ -45,7 +45,7 @@ app.use(
       maxAge: 60 * 60 * 24 * 1000, //60 sec * 60 min * 24hrs = 1 day (in milliseconds)
     },
     store: new MongoStore({
-      url: 'mongodb://localhost/financely',
+      url: process.env.MONGODB_URI || 'mongodb://localhost/financely',
       // mongooseConnection: mongoose.connection
       //time to live (in seconds)
       ttl: 60 * 60 * 24,
