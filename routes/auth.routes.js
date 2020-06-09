@@ -46,7 +46,7 @@ router.post('/signup', (req, res) => {
           .then((passwordHash) => {
             UserModel.create({name, email, creditCard, experience, passwordHash})
               .then(() => {
-                res.redirect('/');
+                res.redirect('/auth/signin');
               })
               .catch((err) => {
                 if (err.code === 11000) {
