@@ -23,7 +23,17 @@ canvas{
 
 .homepage{
   color: darkblue;
-  border: 1px solid darkcyan;
+  border-radius: 5px;
+  background-color: rgb(236, 236, 241);
+  font-family: Arvo;
+  display: inline-block;
+  padding: 5px;
+}
+
+
+.news{
+  color: rgb(27, 85, 75);
+  font-family: 'Segoe UI';
 }
 /*
 form {

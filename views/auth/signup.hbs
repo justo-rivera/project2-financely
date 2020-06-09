@@ -1,23 +1,48 @@
 
 
-<form method="POST" action="/auth/signup">
-    <label for="username">Name</label>
-    <input type="text" name="name" id="username" >
-    <label for="user-email">Email</label>
-    <input type="email" name="email" id="user-email" >
-    <label for="user-pass">Password</label>
-    <input type="password" name="password" id="user-pass" >
-    <label for="user-pass">Credit Card</label>
-    <input type="creditcard" name="creditCard" id="user-card" >
-    <label for="experience">Trading Experience</label>
+<form method="POST" action="/auth/signin">
+  <div class="form-group row">
+    <label for="username" class="col-sm-2 col-form-label">Name</label>
+    <div class="col-sm-10">
+      <input type="email" class="form-control" name="name" id="username" placeholder="Email">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="user-email" class="col-sm-2 col-form-label" >Email</label>
+    <div class="col-sm-10">
+      <input type="password" name = 'email' class="form-control" id="user-email" placeholder="Password">
+    </div>
+  </div>
+   <div class="form-group row">
+    <label for="user-pass" class="col-sm-2 col-form-label" >Password</label>
+    <div class="col-sm-10">
+      <input type="password" name = 'password' class="form-control" id="user-pass" placeholder="Password">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="user-card" class="col-sm-2 col-form-label" >Credit Card</label>
+    <div class="col-sm-10">
+      <input type="creditcard" name = 'creditcard' class="form-control" id="user-card" placeholder="Password">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="user-card" class="col-sm-2 col-form-label" for='experience' >Trading Experience</label>
     <select name="experience" id="cars">
-    <option value="Zero experience">Zero Experience</option>
+     <option value="Zero experience">Zero Experience</option>
     <option value="Some experience">Some Experience</option>
     <option value="Professional">Professional</option>
     <option value="Broker">Broker</option>
-    </select>
-    <button type="submit" >Sign Up</button>
+      </select>
+  </div>
+  <div class="form-group row">
+    <div class="col-sm-10">
+      <button type="submit" class="btn btn-primary">Sign in</button>
+    </div>
+  </div>
 </form>
+
+
+
 
 {{#if errorMessage}}
   <div class="error">{{errorMessage}}</div>

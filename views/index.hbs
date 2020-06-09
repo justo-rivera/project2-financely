@@ -2,11 +2,11 @@
 <h1 class="homepage">Home Page</h1>
 
 <div class="home-page">
-  <h1 > <i> TRADE STOCKS EASILY AND SECURILY WITH <img src="/images/large_financely.png"></i></h1>
+  <h1 > <i> TRADE STOCKS EASILY AND SECURILY WITH <a href="/"> <img src="/images/large_financely.png"></a></i></h1>
 </div>
 <div class="news">
   {{#each favoriteNews}}
-    <h2>Latest {{this.symbol}} news</h2>
+    <h2 class="news">Latest {{this.symbol}} news and charts</h2>
         <button onclick="{{this.symbol}}Chart5d()">5 days</button>
         <button onclick="{{this.symbol}}Chart1m()">1 month</button>
         <canvas id="{{this.symbol}}" ></canvas>

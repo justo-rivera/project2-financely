@@ -1,4 +1,5 @@
-<h2>You have <span style="color: green">${{moneyLeft}}</span> left</h2>
+
+<h1 class="homepage">You have <span style="color: green">${{moneyLeft}}</span> left</h1>
 <table class="table">
     <thead>
         <tr>
@@ -51,11 +52,11 @@
                     </td> 
                 {{else}}
                     <td>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/MediaWiki_Vector_skin_blue_star_watchlist_icon.svg/1024px-MediaWiki_Vector_skin_blue_star_watchlist_icon.svg.png" alt="" class="watchlist-image">
                     
                     <form action="/stocks" method="POST">
                         <input type="hidden" name="symbol" value="{{this.data.symbol}}">
-                        <button type="submit" class="btn btn-primary">remove from watchlist</button>
+                        <button type="submit" class="btn btn-primary">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/MediaWiki_Vector_skin_blue_star_watchlist_icon.svg/1024px-MediaWiki_Vector_skin_blue_star_watchlist_icon.svg.png" alt="" class="watchlist-image">remove from watchlist</button>
                     </form>
                     
                     </td>

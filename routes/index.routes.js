@@ -14,7 +14,7 @@ let stockData = []
 /* GET home page */
 router.get('/', (req, res) => {
     if(!req.session.loggedInUser){
-        res.redirect('/profile')
+        res.redirect('/auth/signin')
         return
     }
     const {_id: userId} = req.session.loggedInUser;
@@ -81,7 +81,7 @@ router.get('/', (req, res) => {
 
 router.get('/stocks', (req, res) => {
     if(!req.session.loggedInUser){
-        res.redirect('/profile')
+        res.redirect('/auth/signin')
         return
     }
     let moneyLeft = req.session.loggedInUser.money;
@@ -118,7 +118,7 @@ router.get('/stocks', (req, res) => {
 })
 router.get('/stock', (req, res) => {
     if(!req.session.loggedInUser){
-        res.redirect('/profile')
+        res.redirect('/auth/signin')
         return
     }
     const {symbol} = req.query;
@@ -182,6 +182,10 @@ router.get('/stock', (req, res) => {
 
 
 router.post('/stocks',(req,res)=>{
+    if(!req.session.loggedInUser){
+        res.redirect('/auth/signin')
+        return
+    }
     let {symbol} = req.body;
     
     UserModel.updateOne({_id:req.session.loggedInUser._id},{ $pull: {favorites: symbol}
@@ -203,7 +207,7 @@ router.post('/stocks',(req,res)=>{
 })
 router.get('/profile/transactions', (req, res) => {
     if(!req.session.loggedInUser){
-        res.redirect('/profile')
+        res.redirect('/auth/signin')
         return
     }
     const {_id: userId, email, passwordHash} = req.session.loggedInUser;
@@ -251,7 +255,7 @@ router.get('/profile/transactions', (req, res) => {
 })
 router.post('/buy', (req, res) => {
     if(!req.session.loggedInUser){
-        res.redirect('/profile')
+        res.redirect('/auth/signin')
         return
     }
     const {symbol, price, shares} = req.body;
@@ -289,12 +293,13 @@ router.post('/buy', (req, res) => {
 })
 router.post('/sell', (req, res) => {
     if(!req.session.loggedInUser){
-        res.redirect('/profile')
+        res.redirect('/auth/signin')
         return
     }
     const {transactionId, profit, currentPrice, shares} = req.body
     const {_id: userId} = req.session.loggedInUser
     const closeTransactionPrice = Number((shares*currentPrice).toFixed(2))
+    console.log(closeTransactionPrice)
     TransactionModel.findByIdAndUpdate(transactionId, {$set: {exitPrice: currentPrice, profit, closed: true}})
         .then( () => {
             UserModel.findByIdAndUpdate(userId, {$inc: {money: closeTransactionPrice}} )
@@ -307,7 +312,7 @@ router.post('/sell', (req, res) => {
 })
 router.get('/profile', (req, res) => {
     if(!req.session.loggedInUser){
-        res.render('users/profile.hbs')
+        res.redirect('/auth/signin')
         return
     }
     const {_id: userId} = req.session.loggedInUser;
@@ -319,7 +324,7 @@ router.get('/profile', (req, res) => {
 })
 router.post('/undo', (req, res) => {
     if(!req.session.loggedInUser){
-        res.render('users/profile.hbs')
+        res.redirect('/auth/signin')
         return
     }
     const {_id: userId} = req.session.loggedInUser;
@@ -363,7 +368,7 @@ router.post('/undo', (req, res) => {
 })
 router.post('/profile/add-funds', (req, res) => {
     if(!req.session.loggedInUser){
-        res.redirect('/profile')
+        res.redirect('/auth/signin')
         return
     }
     const {_id: userId} = req.session.loggedInUser;
@@ -377,7 +382,7 @@ router.post('/profile/add-funds', (req, res) => {
 
 router.post('/favorites',(req,res)=>{
     if(!req.session.loggedInUser){
-        res.redirect('/profile')
+        res.redirect('/auth/signin')
         return
     }
     let {symbol,remove} = req.body
@@ -463,12 +468,7 @@ router.post('/favorites',(req,res)=>{
 
 router.get('/favorites',(req,res)=>{
     if(!req.session.loggedInUser){
-        res.redirect('/profile')
-        return
-    }
-
-    if(!req.session.loggedInUser){
-        res.send('Login first')
+        res.redirect('/auth/signin')
         return
     }
     const id = req.session.loggedInUser._id;
@@ -497,6 +497,10 @@ router.get('/favorites',(req,res)=>{
 })
 
 router.get(('/auth/logout'), (req,res)=>{
+    if(!req.session.loggedInUser){
+        res.redirect('/auth/signin')
+        return
+    }
     UserModel.findById(req.session.loggedInUser._id)
         .then((user)=>{
             res.render('./auth/logout.hbs',{user})
@@ -508,6 +512,6 @@ router.get(('/auth/logout'), (req,res)=>{
 router.post(('/auth/logout'), (req,res)=>{
     let {id} = req.body
     req.session.destroy()
-    res.render('users/profile')
+    res.redirect('/auth/signin')
 })
 module.exports = router;
