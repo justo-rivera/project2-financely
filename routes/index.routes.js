@@ -33,7 +33,7 @@ router.get('/', (req, res) => {
             })
             })
         let stockHistory5d = [];
-        let promisesCharts5d/* = favorites.map( fav => {
+        let promisesCharts5d = favorites.map( fav => {
             return axios.get(`https://cloud.iexapis.com/stable/stock/${fav}/chart/5d?token=${API_TOKEN}&chartCloseOnly=true`)
                 .then( ({data}) => {
                     data.forEach( stock => {
@@ -44,9 +44,9 @@ router.get('/', (req, res) => {
                     
                 })
                 .catch( err => console.log(err))
-        })*/
+        })
         let stockHistory1m = [];
-        let promisesCharts1m/* = favorites.map( fav => {
+        let promisesCharts1m = favorites.map( fav => {
             return axios.get(`https://cloud.iexapis.com/stable/stock/${fav}/chart/1m?token=${API_TOKEN}&chartCloseOnly=true`)
                 .then( ({data}) => {
                     data.forEach( stock => {
@@ -57,7 +57,7 @@ router.get('/', (req, res) => {
                     
                 })
                 .catch( err => console.log(err))
-        })*/
+        })
 
         let stockHistory6m = [];
         let promisesCharts6m /*= favorites.map( fav => {
