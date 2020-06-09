@@ -1,3 +1,4 @@
+<script src="/javascripts/Chart.min.js"></script>
 <h1>Home Page</h1>
 
 <div class="home-page">
@@ -6,6 +7,7 @@
 <div class="news">
   {{#each favoriteNews}}
     <h2>Latest {{this.symbol}} news</h2>
+        <canvas id="{{this.symbol}}" ></canvas>
     {{#each this.news}}
         <h5>
         <a href="{{this.url}}" target="_blank">
@@ -17,4 +19,29 @@
     </p>
     {{/each}}
   {{/each}}
+<script>
+  function initCharts(){
+  {{#each stockHistory}}
+  let {{this.symbol}}Ctx = document.getElementById('{{this.symbol}}').getContext('2d');
+  let {{this.symbol}}Chart = new Chart({{this.symbol}}Ctx, {
+    type: 'line',
+    data: {
+        datasets: [{
+            label: '{{this.symbol}}',
+            data: [
+            {{#each this.dayArray}}
+              {{this.close}},
+            {{/each}}
+            ]
+        }],
+        labels: [{{#each this.dayArray}}
+                '{{this.label}}',
+               {{/each}}]
+        
+    },
+  })
+  {{/each}}
+  }
+  window.onload = initCharts
+</script>
 </div>

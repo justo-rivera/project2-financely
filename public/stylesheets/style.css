@@ -16,6 +16,10 @@ a {
   height: 40px;
 }
 
+canvas{
+  width : 700px !important;
+  height : 400px !important
+}
 /*
 form {
   margin: 30px auto;

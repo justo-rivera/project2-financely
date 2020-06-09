@@ -25,18 +25,24 @@ router.get('/', (req, res) => {
         let promises = favorites.map( fav =>{
             return axios.get(`https://cloud.iexapis.com/stable/stock/${fav}/news/last/2?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
             .then( ({data: news}) => {
-                console.log(news)
                 favoriteNews.push({symbol: fav, news})
             })
             .catch(err=>{
                 console.error(err)
             })
             })
-
+        let stockHistory = [];
+        let promisesCharts = favorites.map( fav => {
+            return axios.get(`https://cloud.iexapis.com/stable/stock/${fav}/chart/5d?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+                .then( ({data}) => {
+                    stockHistory.push({symbol: fav, dayArray: data})
+                    
+                })
+                .catch( err => console.log(err))
+        })
         Promise.all(promises)
         .then( () => {
-            console.log(favoriteNews)
-            res.render('index.hbs', {favoriteNews})
+            res.render('index.hbs', {favoriteNews, stockHistory})
         })
         .catch( err => console.error(err))
     })
