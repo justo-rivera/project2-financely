@@ -1,1 +1,1 @@
-module.exports = [ 'SPH', 'CHGX', 'ALNA', 'DUSA', 'DCP', 'CSPR']
+module.exports = [ 'SPH', 'CHGX', 'ALNA', 'DUSA', 'DCP', 'CSPR','AAL','AMZN','BIDU','ATVI','EBAY','ADSK']
