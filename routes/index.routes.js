@@ -124,7 +124,7 @@ router.get('/stock', (req, res) => {
     const {symbol} = req.query;
     const {email, passwordHash} = req.session.loggedInUser;
     let error = false;
-    let data = {stockData: '', companyData: '', error, news: []}
+    let data = {stockData: '', companyData: '', error, news: [], searchSymbol: symbol}
     let promises = []
     promises.push(
         axios.get(`https://cloud.iexapis.com/stable/stock/${symbol}/quote?token=${API_TOKEN}`)
@@ -137,6 +137,7 @@ router.get('/stock', (req, res) => {
         .catch(err=>{
             console.error(err)
             error += 'stock info for '+symbol+' not found'
+            //res.redirect('/search?q='+symbol) //Paid tier only....
         })
     )
     promises.push(
@@ -180,7 +181,14 @@ router.get('/stock', (req, res) => {
         .catch( err => console.error(err))
 })
 
-
+/*
+Cant search on free tier.....
+router.get('/search', (req, res)=>{
+    const {q} = req.query;
+    axios.get(`https://cloud.iexapis.com/stable/search/${q}/?token=${API_TOKEN}`)
+        .then( ({data}) => res.render('search', {tenResults: data}))
+        .catch( err => console.log(err))
+})*/
 router.post('/stocks',(req,res)=>{
     if(!req.session.loggedInUser){
         res.redirect('/auth/signin')

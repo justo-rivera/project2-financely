@@ -1,0 +1,8 @@
+Couldn't find {{q}}, did you mean...
+{{#each tenResults}}
+  <a href="/stock?symbol={{this.symbol}}">
+    {{this.securityName}}
+  </a>
+  ({{this.symbol}})
+  <br/>
+{{/each}}
