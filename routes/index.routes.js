@@ -40,8 +40,11 @@ router.get('/', (req, res) => {
                 })
                 .catch( err => console.log(err))
         })
+
+        promises.concat(promisesCharts)
         Promise.all(promises)
         .then( () => {
+            console.log(promises)
             res.render('index.hbs', {favoriteNews, stockHistory})
         })
         .catch( err => console.error(err))
