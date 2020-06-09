@@ -17,8 +17,13 @@ a {
 }
 
 canvas{
-  width : 700px !important;
-  height : 400px !important
+  width : 70vw !important;
+  height : 70vh !important;
+}
+
+.homepage{
+  color: darkblue;
+  border: 1px solid darkcyan;
 }
 /*
 form {
@@ -69,6 +74,7 @@ form button:hover {
 
 .inline{
   display: inline;
+  /*color: rgb(152, 214, 216)*/
 }
 .search{
   display: inline;

@@ -1,5 +1,5 @@
 <script src="/javascripts/Chart.min.js"></script>
-<h1>Home Page</h1>
+<h1 class="homepage">Home Page</h1>
 
 <div class="home-page">
   <h1 > <i> TRADE STOCKS EASILY AND SECURILY WITH <img src="/images/large_financely.png"></i></h1>
@@ -7,6 +7,8 @@
 <div class="news">
   {{#each favoriteNews}}
     <h2>Latest {{this.symbol}} news</h2>
+        <button onclick="{{this.symbol}}Chart5d()">5 days</button>
+        <button onclick="{{this.symbol}}Chart1m()">1 month</button>
         <canvas id="{{this.symbol}}" ></canvas>
     {{#each this.news}}
         <h5>
@@ -20,28 +22,83 @@
     {{/each}}
   {{/each}}
 <script>
-  function initCharts(){
-  {{#each stockHistory}}
+  {{#each stockHistory5d}}
   let {{this.symbol}}Ctx = document.getElementById('{{this.symbol}}').getContext('2d');
-  let {{this.symbol}}Chart = new Chart({{this.symbol}}Ctx, {
-    type: 'line',
-    data: {
-        datasets: [{
-            label: '{{this.symbol}}',
-            data: [
-            {{#each this.dayArray}}
-              {{this.close}},
-            {{/each}}
-            ]
-        }],
-        labels: [{{#each this.dayArray}}
-                '{{this.label}}',
-               {{/each}}]
-        
-    },
-  })
-  {{/each}}
+  let {{this.symbol}}Chart5d = function(){
+      new Chart({{this.symbol}}Ctx, {
+      type: 'line',
+      data: {
+          datasets: [{
+              label: '{{this.symbol}}',
+              data: [
+              {{#each this.dayArray}}
+                {{this.close}},
+              {{/each}}
+              ],
+              backgroundColor: "rgb(152, 214, 216)",
+              borderColor:"rgb(75, 192, 192)"
+          }],
+          labels: [{{#each this.dayArray}}
+                  '{{this.label}}',
+                {{/each}}]
+          
+      },
+    })
   }
+  {{/each}}
+  {{#each stockHistory1m}}
+    let {{this.symbol}}Chart1m = function(){
+      new Chart({{this.symbol}}Ctx, {
+      type: 'line',
+      data: {
+          datasets: [{
+              label: '{{this.symbol}}',
+              data: [
+              {{#each this.dayArray}}
+                {{this.close}},
+              {{/each}}
+              ],
+              backgroundColor: "rgb(152, 214, 216)",
+              borderColor:"rgb(75, 192, 192)"
+          }],
+          labels: [{{#each this.dayArray}}
+                  '{{this.label}}',
+                {{/each}}]
+          
+      },
+    })
+  }
+  {{/each}}
+  {{#each stockHistory6m}}
+    let {{this.symbol}}Chart6m = function(){
+      new Chart({{this.symbol}}Ctx, {
+      type: 'line',
+      data: {
+          datasets: [{
+              label: '{{this.symbol}}',
+              data: [
+              {{#each this.dayArray}}
+                {{this.close}},
+              {{/each}}
+              ],
+              backgroundColor: "rgb(152, 214, 216)",
+              borderColor:"rgb(75, 192, 192)"              
+          }],
+          labels: [{{#each this.dayArray}}
+                  '{{this.label}}',
+                {{/each}}]
+          
+      },
+
+    })
+  }
+  {{/each}}
+  function initCharts(){
+    {{#each stockHistory5d}}
+      {{this.symbol}}Chart5d()
+    {{/each}}
+  }
+
   window.onload = initCharts
 </script>
 </div>

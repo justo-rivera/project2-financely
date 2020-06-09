@@ -6,7 +6,7 @@ const SessionModel = require('../models/Session.model')
 const TransactionModel = require('../models/Transaction.model')
 const nasdaqStocks = require('../info/nasdaq')
 const nyseStocks = require('../info/nyse')
-
+const API_TOKEN = process.env.API_TOKEN;
 let stockData = []
 
 
@@ -22,8 +22,9 @@ router.get('/', (req, res) => {
     let favoriteNews = [];
     UserModel.findById(userId)
     .then( ({favorites}) => {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
         let promises = favorites.map( fav =>{
-            return axios.get(`https://cloud.iexapis.com/stable/stock/${fav}/news/last/2?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+            return axios.get(`https://cloud.iexapis.com/stable/stock/${fav}/news/last/2?token=${API_TOKEN}`)
             .then( ({data: news}) => {
                 favoriteNews.push({symbol: fav, news})
             })
@@ -31,21 +32,47 @@ router.get('/', (req, res) => {
                 console.error(err)
             })
             })
-        let stockHistory = [];
-        let promisesCharts = favorites.map( fav => {
-            return axios.get(`https://cloud.iexapis.com/stable/stock/${fav}/chart/5d?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+        let stockHistory5d = [];
+        let promisesCharts5d/* = favorites.map( fav => {
+            return axios.get(`https://cloud.iexapis.com/stable/stock/${fav}/chart/5d?token=${API_TOKEN}&chartCloseOnly=true`)
                 .then( ({data}) => {
-                    stockHistory.push({symbol: fav, dayArray: data})
+                    data.forEach( stock => {
+                        let date = new Date(stock.date);
+                        stock.label = months[date.getMonth()] + ' ' + date.getDate();
+                    })   
+                    stockHistory5d.push({symbol: fav, dayArray: data})
                     
                 })
                 .catch( err => console.log(err))
-        })
+        })*/
+        let stockHistory1m = [];
+        let promisesCharts1m/* = favorites.map( fav => {
+            return axios.get(`https://cloud.iexapis.com/stable/stock/${fav}/chart/1m?token=${API_TOKEN}&chartCloseOnly=true`)
+                .then( ({data}) => {
+                    data.forEach( stock => {
+                        let date = new Date(stock.date);
+                        stock.label = months[date.getMonth()] + ' ' + date.getDate();
+                    })                
+                    stockHistory1m.push({symbol: fav, dayArray: data})
+                    
+                })
+                .catch( err => console.log(err))
+        })*/
 
-        promises.concat(promisesCharts)
-        Promise.all(promises)
+        let stockHistory6m = [];
+        let promisesCharts6m /*= favorites.map( fav => {
+            return axios.get(`https://cloud.iexapis.com/stable/stock/${fav}/chart/6m?token=${API_TOKEN}`)
+                .then( ({data}) => {
+                    stockHistory6m.push({symbol: fav, dayArray: data})
+                    
+                })
+                .catch( err => console.log(err))
+        })*/
+        
+        let everyPromise = promises.concat(promisesCharts5d,promisesCharts1m,promisesCharts6m)
+        Promise.all(everyPromise)
         .then( () => {
-            console.log(promises)
-            res.render('index.hbs', {favoriteNews, stockHistory})
+            res.render('index.hbs', {favoriteNews, stockHistory5d,stockHistory1m, stockHistory6m})
         })
         .catch( err => console.error(err))
     })
@@ -60,7 +87,7 @@ router.get('/stocks', (req, res) => {
     let moneyLeft = req.session.loggedInUser.money;
     const id = req.session.id;
     let promises = nasdaqStocks.map((elem)=>{
-        return axios.get(`https://cloud.iexapis.com/stable/stock/${elem}/quote?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+        return axios.get(`https://cloud.iexapis.com/stable/stock/${elem}/quote?token=${API_TOKEN}`)
    })
 
    Promise.all(promises)
@@ -100,7 +127,7 @@ router.get('/stock', (req, res) => {
     let data = {stockData: '', companyData: '', error, news: []}
     let promises = []
     promises.push(
-        axios.get(`https://cloud.iexapis.com/stable/stock/${symbol}/quote?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+        axios.get(`https://cloud.iexapis.com/stable/stock/${symbol}/quote?token=${API_TOKEN}`)
         .then( ({data: stockData}) => {
             data.stockData = stockData;
             data.stockData.changePercent *= 100;
@@ -113,7 +140,7 @@ router.get('/stock', (req, res) => {
         })
     )
     promises.push(
-        axios.get(`https://cloud.iexapis.com/stable/stock/${symbol}/company?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+        axios.get(`https://cloud.iexapis.com/stable/stock/${symbol}/company?token=${API_TOKEN}`)
         .then( ({data: companyData}) => {
             data.companyData = companyData;
         })
@@ -122,7 +149,7 @@ router.get('/stock', (req, res) => {
         })
     )
     promises.push(
-        axios.get(`https://cloud.iexapis.com/stable/stock/${symbol}/news/last/4?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+        axios.get(`https://cloud.iexapis.com/stable/stock/${symbol}/news/last/4?token=${API_TOKEN}`)
         .then( ({data: news}) => {
             data.news = news;
         })
@@ -189,7 +216,7 @@ router.get('/profile/transactions', (req, res) => {
         .sort({ createdAt: -1})
         .then( transactions => {
             for(let index in transactions){
-                promises.push(axios.get(`https://cloud.iexapis.com/stable/stock/${transactions[index].symbol}/quote?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+                promises.push(axios.get(`https://cloud.iexapis.com/stable/stock/${transactions[index].symbol}/quote?token=${API_TOKEN}`)
                     .then( ({data}) => {
                         transactions[index].companyName = data.companyName;
                         transactions[index].currentPrice = data.latestPrice;
@@ -376,7 +403,7 @@ router.post('/favorites',(req,res)=>{
                                 
                                 let promises = user.favorites.map((elem)=>{
                                     if(elem!==null){
-                                        return axios.get(`https://cloud.iexapis.com/stable/stock/${elem}/quote?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+                                        return axios.get(`https://cloud.iexapis.com/stable/stock/${elem}/quote?token=${API_TOKEN}`)
                                     }
                                 })
                                 Promise.all(promises)
@@ -410,7 +437,7 @@ router.post('/favorites',(req,res)=>{
                                 .then((user)=>{
                                     //console.log(user.favorites)
                                     let promises = user.favorites.map((elem)=>{
-                                        return axios.get(`https://cloud.iexapis.com/stable/stock/${elem}/quote?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+                                        return axios.get(`https://cloud.iexapis.com/stable/stock/${elem}/quote?token=${API_TOKEN}`)
                                     })
                                     Promise.all(promises)
                                         .then((stockI)=>{
@@ -451,7 +478,7 @@ router.get('/favorites',(req,res)=>{
             
             let promises = user.favorites.map((elem)=>{
                 if(elem!==null){
-                    return axios.get(`https://cloud.iexapis.com/stable/stock/${elem}/quote?token=pk_3d08c1fd646a4e4ba1b6b3de24f003df`)
+                    return axios.get(`https://cloud.iexapis.com/stable/stock/${elem}/quote?token=${API_TOKEN}`)
                 }
             })
             Promise.all(promises)
