@@ -4,22 +4,28 @@
 <div class="home-page">
   <h1 > <i> TRADE STOCKS EASILY AND SECURILY WITH <a href="/"> <img src="/images/large_financely.png"></a></i></h1>
 </div>
+
 <div class="news">
   {{#each favoriteNews}}
     <h2 class="news">Latest {{this.symbol}} news and charts</h2>
         <button onclick="{{this.symbol}}Chart5d()">5 days</button>
         <button onclick="{{this.symbol}}Chart1m()">1 month</button>
         <canvas id="{{this.symbol}}" ></canvas>
+    <div class="container">
     {{#each this.news}}
-        <h5>
-        <a href="{{this.url}}" target="_blank">
-            {{this.headline}}
-        </a>
-    </h5>
-    <p>
-        {{this.summary}}
-    </p>
+          <div class="card mb-3" style="max-width: 540px;">
+            <div class="row no-gutters">
+              <div class="col-md-8">
+                <div class="card-body">
+                 <h5 class="card-title">{{this.symbol}}</h5>
+                  <p class="card-text"><a href="{{this.url}}">{{this.headline}}</a></p>
+              <p class="card-text"><small class="text-muted">{{this.summary}}</small></p>
+            </div>
+          </div>
+        </div>
+      </div>
     {{/each}}
+    </div>
   {{/each}}
 <script>
   {{#each stockHistory5d}}

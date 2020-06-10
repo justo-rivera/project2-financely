@@ -17,8 +17,8 @@ a {
 }
 
 canvas{
-  width : 70vw !important;
-  height : 70vh !important;
+  width : 90vw !important;
+  height : 60vh !important;
 }
 
 .homepage{
@@ -28,6 +28,11 @@ canvas{
   font-family: Arvo;
   display: inline-block;
   padding: 5px;
+}
+
+.container {  
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;  
 }
 
 
