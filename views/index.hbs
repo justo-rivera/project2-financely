@@ -7,9 +7,9 @@
 
 <div class="news">
   {{#each favoriteNews}}
-    <h2 class="news">Latest {{this.symbol}} news and charts</h2>
-        <button onclick="{{this.symbol}}Chart5d()">5 days</button>
-        <button onclick="{{this.symbol}}Chart1m()">1 month</button>
+    <u><strong><h2 class="news">Latest {{this.symbol}} news and charts</h2></strong></u>
+        <button type="button" class="btn btn-primary" onclick="{{this.symbol}}Chart5d()">5 days</button>
+        <button type="button" class="btn btn-primary" onclick="{{this.symbol}}Chart1m()">1 month</button>
         <canvas id="{{this.symbol}}" ></canvas>
     <div class="container">
     {{#each this.news}}
