@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const UserModel = require('../models/User.model');
+const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 
 router.get('/signup', (req, res) => {
@@ -133,6 +134,19 @@ router.post('/signin', (req, res) => {
         });
       return;  
     });
+
+});
+
+router.get('/stripe/:amount', async function(req,res){
+  const {amount} = req.params
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: amount*100,
+    currency: 'usd',
+    // Verify your integration in this guide by including this parameter
+    metadata: {integration_check: 'accept_a_payment'},
+  })
+  
+  res.json({client_secret: paymentIntent.client_secret});
 
 });
 

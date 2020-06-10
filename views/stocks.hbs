@@ -9,7 +9,7 @@
             <th>Change (%)</th>
             <th>N. of shares</th>
             <th></th>
-            <th></th>
+            <th>Watchlist</th>
         </tr>
     </thead>
          {{#each results}}
@@ -45,7 +45,7 @@
                         <input type="hidden" name="remove" value='notRemove'>
                         <i class="glyphicon glyphicon-star-empty"></i>
                         <i class="glyphicon glyphicon-star"></i>
-                        <button type="submit" class="btn btn-primary"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/MediaWiki_Vector_skin_white_star_watchlist_icon.svg/768px-MediaWiki_Vector_skin_white_star_watchlist_icon.svg.png" alt="" class="watchlist-image">ADD TO WATCHLIST</button>
+                        <button type="submit" class="btn btn-primary"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/MediaWiki_Vector_skin_white_star_watchlist_icon.svg/768px-MediaWiki_Vector_skin_white_star_watchlist_icon.svg.png" alt="" class="watchlist-image">ADD</button>
                        
                         </form>
                         </label>
@@ -56,7 +56,7 @@
                     <form action="/stocks" method="POST">
                         <input type="hidden" name="symbol" value="{{this.data.symbol}}">
                         <button type="submit" class="btn btn-primary">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/MediaWiki_Vector_skin_blue_star_watchlist_icon.svg/1024px-MediaWiki_Vector_skin_blue_star_watchlist_icon.svg.png" alt="" class="watchlist-image">remove from watchlist</button>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/MediaWiki_Vector_skin_blue_star_watchlist_icon.svg/1024px-MediaWiki_Vector_skin_blue_star_watchlist_icon.svg.png" alt="" class="watchlist-image">REMOVE</button>
                     </form>
                     
                     </td>

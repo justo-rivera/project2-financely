@@ -22,7 +22,8 @@
     "mongodb": "^3.5.8",
     "mongoose": "^5.7.13",
     "morgan": "^1.9.1",
-    "serve-favicon": "^2.5.0"
+    "serve-favicon": "^2.5.0",
+    "stripe": "^8.61.0"
   },
   "devDependencies": {
     "@ironh/eslint-config": "0.0.2",

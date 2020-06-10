@@ -1,4 +1,12 @@
 const { Schema, model } = require('mongoose');
+const getMoney = (num) => {
+  return (num/100).toFixed(2)
+}
+
+const setMoney = (num) => {
+  return num * 100
+}
+
 const userSchema = new Schema(
   {
     name: {
@@ -19,7 +27,9 @@ const userSchema = new Schema(
     },
     money: {
       type: Number,
-      default: 0
+      default: 0,
+      get: getMoney,
+      set: setMoney
     },
     experience: {
       type: String,

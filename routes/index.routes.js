@@ -100,14 +100,14 @@ router.get('/stocks', (req, res) => {
                 console.log(element.data)
                 return UserModel.findById(req.session.loggedInUser._id)
                 .then( user => {
-                    moneyLeft = Number((user.money).toFixed(2));
+                    moneyLeft = user.money;
                     user.favorites.forEach((elem)=>{
                         if(elem === element.data.symbol){
                             element.data.notFavorite = false;
                         }
                     })
                 })
-                .catch( err => res.send(err))
+                .catch( err => console.log(err))
             })
             Promise.all(arrPromises)
                 .then(() => {
@@ -381,7 +381,7 @@ router.post('/profile/add-funds', (req, res) => {
     }
     const {_id: userId} = req.session.loggedInUser;
     const {dollars} =req.body;
-    UserModel.findByIdAndUpdate(userId, {$inc: { money: dollars} })
+    UserModel.findByIdAndUpdate(userId, {$inc: { money: dollars/100} })
         .then( () => 
             res.redirect('/profile')
         )
