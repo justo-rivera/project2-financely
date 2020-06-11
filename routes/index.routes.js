@@ -162,14 +162,14 @@ router.get('/stock', (req, res) => {
     promises.push(
          UserModel.findById(req.session.loggedInUser._id)
                 .then( user => {
-                    data.moneyLeft = Number((user.money).toFixed(2))
+                    data.moneyLeft = user.money
                     user.favorites.forEach((elem)=>{
                         if(elem === symbol){
                             data.notFavorite = false;
                         }
                     })
                 })
-                .catch( err => res.send(err))
+                .catch( err => console.log(err))
     )
 
 
