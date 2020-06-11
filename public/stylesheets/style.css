@@ -106,6 +106,22 @@ form button:hover {
 .center{
   text-align: center;
 }
+
+.logout{
+  padding: 10px;
+  display: auto;
+  text-align : center;
+  border: 2px solid black;
+  font-weight: 900;
+  font-size: xx-large;
+  color: #43a3e6;
+
+}
+
+.logout-layout{
+  float: right;
+  padding: 5px;
+}
 /*
 ul {
   border-bottom: 2px solid #43a3e6;

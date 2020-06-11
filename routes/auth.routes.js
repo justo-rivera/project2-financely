@@ -22,23 +22,23 @@ router.post('/signup', (req, res) => {
         return;  
     }
 
-    // const myRegex = new RegExp(/^[a-z0-9](?!.*?[^\na-z0-9]{2})[^\s@]+@[^\s@]+\.[^\s@]+[a-z0-9]$/);
-    // if (!myRegex.test(email)) {
-    //   res.status(500)
-    //       .render('auth/signup.hbs', {
-    //         errorMessage: 'Email format not correct'
-    //       });
-    //     return;  
-    // }
+    const myRegex = new RegExp(/^[a-z0-9](?!.*?[^\na-z0-9]{2})[^\s@]+@[^\s@]+\.[^\s@]+[a-z0-9]$/);
+    if (!myRegex.test(email)) {
+      res.status(500)
+          .render('auth/signup.hbs', {
+            errorMessage: 'Email format not correct'
+          });
+        return;  
+    }
 
-    // const myPassRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/);
-    // if (!myPassRegex.test(password)) {
-    //   res.status(500)
-    //       .render('auth/signup.hbs', {
-    //         errorMessage: 'Password needs to have 8 characters, a number and an Uppercase alphabet'
-    //       });
-    //     return;  
-    // }
+    const myPassRegex = new RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/);
+    if (!myPassRegex.test(password)) {
+      res.status(500)
+          .render('auth/signup.hbs', {
+            errorMessage: 'Password needs to have 8 characters, a number and an Uppercase alphabet'
+          });
+        return;  
+    }
 
     bcrypt.genSalt(12)
       .then((salt) => {
