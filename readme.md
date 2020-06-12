@@ -155,12 +155,12 @@ const transactionSchema = new Schema(
 
 The url to your repository and to your deployed project
 
-[Repository Link](http://github.com)
+[Repository Link](https://github.com/javiasua/project2-financely)
 
-[Deploy Link](http://heroku.com)
+[Deploy Link](http://finance-ly.herokuapp.com/)
 
 ### Slides
 
 The url to your presentation slides
 
-[Slides Link](http://slides.com)
+[Slides Link](https://docs.google.com/presentation/d/1k2Cirlzo5ZVzraNTRk24ZeBuzmCapvmTo9QuNb7C-5s/edit#slide=id.g88a00037a0_0_5)

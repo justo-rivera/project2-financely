@@ -89,6 +89,7 @@ router.get('/stocks', (req, res) => {
     let promises = nasdaqStocks.map((elem)=>{
         return axios.get(`https://cloud.iexapis.com/stable/stock/${elem}/quote?token=${API_TOKEN}`)
    })
+   
 
    Promise.all(promises)
        .then((results)=>{
@@ -213,6 +214,7 @@ router.post('/stocks',(req,res)=>{
         })
     
 })
+
 router.get('/profile/transactions', (req, res) => {
     if(!req.session.loggedInUser){
         res.redirect('/auth/signin')
